@@ -150,7 +150,7 @@ def populate_final_sheet_win32(ws, sample_name: str, plate_number: str, date_mmd
         pass
 
 
-def populate_stepone_data_win32(ws, sample_data: Dict, icr1_start_row: int = 6, icr2_start_row: int = 24):
+def populate_stepone_data_win32(ws, sample_data: Dict, target1_start_row: int = 6, target2_start_row: int = 24):
     """
     Populate the StepOne Data sheet with sample data using win32com.
     All Cq values for each target are placed in the same column (not diagonal).
@@ -160,90 +160,90 @@ def populate_stepone_data_win32(ws, sample_data: Dict, icr1_start_row: int = 6, 
 
     Args:
         ws: COM worksheet object for 'StepOne Data' sheet
-        sample_data: Dictionary with sample Cq values (contains icr1_m, icr1_um, icr2_m, icr2_um)
-        icr1_start_row: Starting row number for ICR1 data (default 6)
-        icr2_start_row: Starting row number for ICR2 data (default 24)
+        sample_data: Dictionary with sample Cq values (contains target1_m, target1_um, target2_m, target2_um)
+        target1_start_row: Starting row number for first target data (default 6)
+        target2_start_row: Starting row number for second target data (default 24)
     """
     sample_name = sample_data['sample_name']
 
-    # ========== ICR1 DATA (Rows 6-8) ==========
+    # ========== TARGET1 DATA (Rows 6-8) ==========
     # Row 1 of the sample (first replicate)
-    ws.Cells(icr1_start_row, 1).Value = sample_name  # A - Sample name
+    ws.Cells(target1_start_row, 1).Value = sample_name  # A - Sample name
     # Column B (target name) is NOT modified - preserve template value
-    if len(sample_data['icr1_m']) > 0 and sample_data['icr1_m'][0] is not None:
-        ws.Cells(icr1_start_row, 3).Value = sample_data['icr1_m'][0]  # C - ICR1_M Cq value
+    if len(sample_data['target1_m']) > 0 and sample_data['target1_m'][0] is not None:
+        ws.Cells(target1_start_row, 3).Value = sample_data['target1_m'][0]  # C - Target1_M Cq value
 
-    ws.Cells(icr1_start_row, 8).Formula = f'=A{icr1_start_row}'  # H - Sample reference
+    ws.Cells(target1_start_row, 8).Formula = f'=A{target1_start_row}'  # H - Sample reference
     # Column I (target name) is NOT modified - preserve template value
-    if len(sample_data['icr1_um']) > 0 and sample_data['icr1_um'][0] is not None:
-        ws.Cells(icr1_start_row, 10).Value = sample_data['icr1_um'][0]  # J - ICR1_UM Cq value
+    if len(sample_data['target1_um']) > 0 and sample_data['target1_um'][0] is not None:
+        ws.Cells(target1_start_row, 10).Value = sample_data['target1_um'][0]  # J - Target1_UM Cq value
 
     # Row 2 of the sample (second replicate)
-    ws.Cells(icr1_start_row + 1, 1).Formula = f'=$A${icr1_start_row}'  # A - Sample reference
-    if len(sample_data['icr1_m']) > 1 and sample_data['icr1_m'][1] is not None:
-        ws.Cells(icr1_start_row + 1, 3).Value = sample_data['icr1_m'][1]  # C - ICR1_M Cq value
+    ws.Cells(target1_start_row + 1, 1).Formula = f'=$A${target1_start_row}'  # A - Sample reference
+    if len(sample_data['target1_m']) > 1 and sample_data['target1_m'][1] is not None:
+        ws.Cells(target1_start_row + 1, 3).Value = sample_data['target1_m'][1]  # C - Target1_M Cq value
 
-    ws.Cells(icr1_start_row + 1, 8).Formula = f'=A{icr1_start_row + 1}'  # H - Sample reference
-    if len(sample_data['icr1_um']) > 1 and sample_data['icr1_um'][1] is not None:
-        ws.Cells(icr1_start_row + 1, 10).Value = sample_data['icr1_um'][1]  # J - ICR1_UM Cq value
+    ws.Cells(target1_start_row + 1, 8).Formula = f'=A{target1_start_row + 1}'  # H - Sample reference
+    if len(sample_data['target1_um']) > 1 and sample_data['target1_um'][1] is not None:
+        ws.Cells(target1_start_row + 1, 10).Value = sample_data['target1_um'][1]  # J - Target1_UM Cq value
 
     # Row 3 of the sample (third replicate)
-    ws.Cells(icr1_start_row + 2, 1).Formula = f'=$A${icr1_start_row}'  # A - Sample reference
-    if len(sample_data['icr1_m']) > 2 and sample_data['icr1_m'][2] is not None:
-        ws.Cells(icr1_start_row + 2, 3).Value = sample_data['icr1_m'][2]  # C - ICR1_M Cq value
+    ws.Cells(target1_start_row + 2, 1).Formula = f'=$A${target1_start_row}'  # A - Sample reference
+    if len(sample_data['target1_m']) > 2 and sample_data['target1_m'][2] is not None:
+        ws.Cells(target1_start_row + 2, 3).Value = sample_data['target1_m'][2]  # C - Target1_M Cq value
 
-    ws.Cells(icr1_start_row + 2, 8).Formula = f'=$A${icr1_start_row}'  # H - Sample reference
-    if len(sample_data['icr1_um']) > 2 and sample_data['icr1_um'][2] is not None:
-        ws.Cells(icr1_start_row + 2, 10).Value = sample_data['icr1_um'][2]  # J - ICR1_UM Cq value
+    ws.Cells(target1_start_row + 2, 8).Formula = f'=$A${target1_start_row}'  # H - Sample reference
+    if len(sample_data['target1_um']) > 2 and sample_data['target1_um'][2] is not None:
+        ws.Cells(target1_start_row + 2, 10).Value = sample_data['target1_um'][2]  # J - Target1_UM Cq value
 
-    # ========== ICR2 DATA (Rows 24-26) ==========
+    # ========== TARGET2 DATA (Rows 24-26) ==========
     # Row 1 of the sample (first replicate)
-    ws.Cells(icr2_start_row, 1).Value = sample_name  # A - Sample name
-    # Column B (target name) is NOT modified - preserve template value (ICR2 M)
-    if len(sample_data['icr2_m']) > 0 and sample_data['icr2_m'][0] is not None:
-        ws.Cells(icr2_start_row, 3).Value = sample_data['icr2_m'][0]  # C - ICR2_M Cq value
+    ws.Cells(target2_start_row, 1).Value = sample_name  # A - Sample name
+    # Column B (target name) is NOT modified - preserve template value
+    if len(sample_data['target2_m']) > 0 and sample_data['target2_m'][0] is not None:
+        ws.Cells(target2_start_row, 3).Value = sample_data['target2_m'][0]  # C - Target2_M Cq value
 
-    ws.Cells(icr2_start_row, 8).Formula = f'=A{icr2_start_row}'  # H - Sample reference
-    # Column I (target name) is NOT modified - preserve template value (ICR2 UM)
-    if len(sample_data['icr2_um']) > 0 and sample_data['icr2_um'][0] is not None:
-        ws.Cells(icr2_start_row, 10).Value = sample_data['icr2_um'][0]  # J - ICR2_UM Cq value
+    ws.Cells(target2_start_row, 8).Formula = f'=A{target2_start_row}'  # H - Sample reference
+    # Column I (target name) is NOT modified - preserve template value
+    if len(sample_data['target2_um']) > 0 and sample_data['target2_um'][0] is not None:
+        ws.Cells(target2_start_row, 10).Value = sample_data['target2_um'][0]  # J - Target2_UM Cq value
 
     # Row 2 of the sample (second replicate)
-    ws.Cells(icr2_start_row + 1, 1).Formula = f'=$A${icr2_start_row}'  # A - Sample reference
-    if len(sample_data['icr2_m']) > 1 and sample_data['icr2_m'][1] is not None:
-        ws.Cells(icr2_start_row + 1, 3).Value = sample_data['icr2_m'][1]  # C - ICR2_M Cq value
+    ws.Cells(target2_start_row + 1, 1).Formula = f'=$A${target2_start_row}'  # A - Sample reference
+    if len(sample_data['target2_m']) > 1 and sample_data['target2_m'][1] is not None:
+        ws.Cells(target2_start_row + 1, 3).Value = sample_data['target2_m'][1]  # C - Target2_M Cq value
 
-    ws.Cells(icr2_start_row + 1, 8).Formula = f'=A{icr2_start_row + 1}'  # H - Sample reference
-    if len(sample_data['icr2_um']) > 1 and sample_data['icr2_um'][1] is not None:
-        ws.Cells(icr2_start_row + 1, 10).Value = sample_data['icr2_um'][1]  # J - ICR2_UM Cq value
+    ws.Cells(target2_start_row + 1, 8).Formula = f'=A{target2_start_row + 1}'  # H - Sample reference
+    if len(sample_data['target2_um']) > 1 and sample_data['target2_um'][1] is not None:
+        ws.Cells(target2_start_row + 1, 10).Value = sample_data['target2_um'][1]  # J - Target2_UM Cq value
 
     # Row 3 of the sample (third replicate)
-    ws.Cells(icr2_start_row + 2, 1).Formula = f'=$A${icr2_start_row}'  # A - Sample reference
-    if len(sample_data['icr2_m']) > 2 and sample_data['icr2_m'][2] is not None:
-        ws.Cells(icr2_start_row + 2, 3).Value = sample_data['icr2_m'][2]  # C - ICR2_M Cq value
+    ws.Cells(target2_start_row + 2, 1).Formula = f'=$A${target2_start_row}'  # A - Sample reference
+    if len(sample_data['target2_m']) > 2 and sample_data['target2_m'][2] is not None:
+        ws.Cells(target2_start_row + 2, 3).Value = sample_data['target2_m'][2]  # C - Target2_M Cq value
 
-    ws.Cells(icr2_start_row + 2, 8).Formula = f'=$A${icr2_start_row}'  # H - Sample reference
-    if len(sample_data['icr2_um']) > 2 and sample_data['icr2_um'][2] is not None:
-        ws.Cells(icr2_start_row + 2, 10).Value = sample_data['icr2_um'][2]  # J - ICR2_UM Cq value
+    ws.Cells(target2_start_row + 2, 8).Formula = f'=$A${target2_start_row}'  # H - Sample reference
+    if len(sample_data['target2_um']) > 2 and sample_data['target2_um'][2] is not None:
+        ws.Cells(target2_start_row + 2, 10).Value = sample_data['target2_um'][2]  # J - Target2_UM Cq value
 
 
-def populate_hela_controls_win32(ws, hela_data: Dict, icr1_start_row: int = 9, icr2_start_row: int = 27):
+def populate_hela_controls_win32(ws, hela_data: Dict, target1_start_row: int = 9, target2_start_row: int = 27):
     """
     Populate HELA control samples in StepOne Data sheet.
-    - ICR1: 3 replicates (rows 9-11) with BOTH M and UM probes
-    - ICR2: 3 replicates (rows 27-29) with BOTH M and UM probes
+    - Target1: 3 replicates (rows 9-11) with BOTH M and UM probes
+    - Target2: 3 replicates (rows 27-29) with BOTH M and UM probes
 
     Args:
         ws: COM worksheet object for 'StepOne Data' sheet
-        hela_data: Dictionary with HELA control Cq values (contains icr1_m, icr1_um, icr2_m, icr2_um)
-        icr1_start_row: Starting row number for ICR1 HELA controls (default 9)
-        icr2_start_row: Starting row number for ICR2 HELA controls (default 27)
+        hela_data: Dictionary with HELA control Cq values (contains target1_m, target1_um, target2_m, target2_um)
+        target1_start_row: Starting row number for target1 HELA controls (default 9)
+        target2_start_row: Starting row number for target2 HELA controls (default 27)
     """
     hela_name = hela_data['sample_name']
 
-    # ========== ICR1 HELA CONTROLS (Rows 9-11) ==========
+    # ========== TARGET1 HELA CONTROLS (Rows 9-11) ==========
     for rep_idx in range(3):
-        current_row = icr1_start_row + rep_idx
+        current_row = target1_start_row + rep_idx
 
         # HELA control name (same for both M and UM)
         ws.Cells(current_row, 1).Value = hela_name  # A - HELA name
@@ -251,17 +251,17 @@ def populate_hela_controls_win32(ws, hela_data: Dict, icr1_start_row: int = 9, i
 
         # Column B and I (target names) preserved from template
 
-        # ICR1_M Cq value (Column C)
-        if rep_idx < len(hela_data['icr1_m']) and hela_data['icr1_m'][rep_idx] is not None:
-            ws.Cells(current_row, 3).Value = hela_data['icr1_m'][rep_idx]  # C - ICR1_M Cq
+        # Target1_M Cq value (Column C)
+        if rep_idx < len(hela_data['target1_m']) and hela_data['target1_m'][rep_idx] is not None:
+            ws.Cells(current_row, 3).Value = hela_data['target1_m'][rep_idx]  # C - Target1_M Cq
 
-        # ICR1_UM Cq value (Column J)
-        if rep_idx < len(hela_data['icr1_um']) and hela_data['icr1_um'][rep_idx] is not None:
-            ws.Cells(current_row, 10).Value = hela_data['icr1_um'][rep_idx]  # J - ICR1_UM Cq
+        # Target1_UM Cq value (Column J)
+        if rep_idx < len(hela_data['target1_um']) and hela_data['target1_um'][rep_idx] is not None:
+            ws.Cells(current_row, 10).Value = hela_data['target1_um'][rep_idx]  # J - Target1_UM Cq
 
-    # ========== ICR2 HELA CONTROLS (Rows 27-29) ==========
+    # ========== TARGET2 HELA CONTROLS (Rows 27-29) ==========
     for rep_idx in range(3):
-        current_row = icr2_start_row + rep_idx
+        current_row = target2_start_row + rep_idx
 
         # HELA control name (same for both M and UM)
         ws.Cells(current_row, 1).Value = hela_name  # A - HELA name
@@ -269,76 +269,76 @@ def populate_hela_controls_win32(ws, hela_data: Dict, icr1_start_row: int = 9, i
 
         # Column B and I (target names) preserved from template
 
-        # ICR2_M Cq value (Column C)
-        if rep_idx < len(hela_data['icr2_m']) and hela_data['icr2_m'][rep_idx] is not None:
-            ws.Cells(current_row, 3).Value = hela_data['icr2_m'][rep_idx]  # C - ICR2_M Cq
+        # Target2_M Cq value (Column C)
+        if rep_idx < len(hela_data['target2_m']) and hela_data['target2_m'][rep_idx] is not None:
+            ws.Cells(current_row, 3).Value = hela_data['target2_m'][rep_idx]  # C - Target2_M Cq
 
-        # ICR2_UM Cq value (Column J)
-        if rep_idx < len(hela_data['icr2_um']) and hela_data['icr2_um'][rep_idx] is not None:
-            ws.Cells(current_row, 10).Value = hela_data['icr2_um'][rep_idx]  # J - ICR2_UM Cq
+        # Target2_UM Cq value (Column J)
+        if rep_idx < len(hela_data['target2_um']) and hela_data['target2_um'][rep_idx] is not None:
+            ws.Cells(current_row, 10).Value = hela_data['target2_um'][rep_idx]  # J - Target2_UM Cq
 
 
-def populate_controls_win32(ws, icr1_controls_data: list, icr2_controls_data: list,
-                           icr1_start_row: int = 12, icr2_start_row: int = 30):
+def populate_controls_win32(ws, target1_controls_data: list, target2_controls_data: list,
+                           target1_start_row: int = 12, target2_start_row: int = 30):
     """
     Populate the control samples in StepOne Data sheet.
-    - ICR1: 3 controls × 3 replicates (rows 12-20) with BOTH M and UM probes
-    - ICR2: 3 controls × 3 replicates (rows 30-38) with BOTH M and UM probes
+    - Target1: 3 controls × 3 replicates (rows 12-20) with BOTH M and UM probes
+    - Target2: 3 controls × 3 replicates (rows 30-38) with BOTH M and UM probes
 
     Args:
         ws: COM worksheet object for 'StepOne Data' sheet
-        icr1_controls_data: List of 3 dictionaries with control data for ICR1
-        icr2_controls_data: List of 3 dictionaries with control data for ICR2
-        icr1_start_row: Starting row number for ICR1 controls (default 12)
-        icr2_start_row: Starting row number for ICR2 controls (default 30)
+        target1_controls_data: List of 3 dictionaries with control data for target1
+        target2_controls_data: List of 3 dictionaries with control data for target2
+        target1_start_row: Starting row number for target1 controls (default 12)
+        target2_start_row: Starting row number for target2 controls (default 30)
     """
-    # ========== ICR1 CONTROLS (Rows 12-20) ==========
+    # ========== TARGET1 CONTROLS (Rows 12-20) ==========
     # Populate 3 controls, each with 3 replicates (9 rows total)
     for control_idx in range(3):
-        icr1_control = icr1_controls_data[control_idx]
-        row_start = icr1_start_row + (control_idx * 3)  # Rows 12-14, 15-17, 18-20
+        target1_control = target1_controls_data[control_idx]
+        row_start = target1_start_row + (control_idx * 3)  # Rows 12-14, 15-17, 18-20
 
         # Populate 3 replicates for this control
         for rep_idx in range(3):
             current_row = row_start + rep_idx
 
-            # ICR1 control name (same for both M and UM)
-            ws.Cells(current_row, 1).Value = icr1_control['sample_name']  # A - Control name
-            ws.Cells(current_row, 8).Value = icr1_control['sample_name']  # H - Control name (same)
+            # Target1 control name (same for both M and UM)
+            ws.Cells(current_row, 1).Value = target1_control['sample_name']  # A - Control name
+            ws.Cells(current_row, 8).Value = target1_control['sample_name']  # H - Control name (same)
 
             # Column B and I (target names) preserved from template
 
-            # ICR1_M Cq value (Column C)
-            if rep_idx < len(icr1_control['icr1_m']) and icr1_control['icr1_m'][rep_idx] is not None:
-                ws.Cells(current_row, 3).Value = icr1_control['icr1_m'][rep_idx]  # C - ICR1_M Cq
+            # Target1_M Cq value (Column C)
+            if rep_idx < len(target1_control['target1_m']) and target1_control['target1_m'][rep_idx] is not None:
+                ws.Cells(current_row, 3).Value = target1_control['target1_m'][rep_idx]  # C - Target1_M Cq
 
-            # ICR1_UM Cq value (Column J)
-            if rep_idx < len(icr1_control['icr1_um']) and icr1_control['icr1_um'][rep_idx] is not None:
-                ws.Cells(current_row, 10).Value = icr1_control['icr1_um'][rep_idx]  # J - ICR1_UM Cq
+            # Target1_UM Cq value (Column J)
+            if rep_idx < len(target1_control['target1_um']) and target1_control['target1_um'][rep_idx] is not None:
+                ws.Cells(current_row, 10).Value = target1_control['target1_um'][rep_idx]  # J - Target1_UM Cq
 
-    # ========== ICR2 CONTROLS (Rows 30-38) ==========
+    # ========== TARGET2 CONTROLS (Rows 30-38) ==========
     # Populate 3 controls, each with 3 replicates (9 rows total)
     for control_idx in range(3):
-        icr2_control = icr2_controls_data[control_idx]
-        row_start = icr2_start_row + (control_idx * 3)  # Rows 30-32, 33-35, 36-38
+        target2_control = target2_controls_data[control_idx]
+        row_start = target2_start_row + (control_idx * 3)  # Rows 30-32, 33-35, 36-38
 
         # Populate 3 replicates for this control
         for rep_idx in range(3):
             current_row = row_start + rep_idx
 
-            # ICR2 control name (same for both M and UM)
-            ws.Cells(current_row, 1).Value = icr2_control['sample_name']  # A - Control name
-            ws.Cells(current_row, 8).Value = icr2_control['sample_name']  # H - Control name (same)
+            # Target2 control name (same for both M and UM)
+            ws.Cells(current_row, 1).Value = target2_control['sample_name']  # A - Control name
+            ws.Cells(current_row, 8).Value = target2_control['sample_name']  # H - Control name (same)
 
             # Column B and I (target names) preserved from template
 
-            # ICR2_M Cq value (Column C)
-            if rep_idx < len(icr2_control['icr2_m']) and icr2_control['icr2_m'][rep_idx] is not None:
-                ws.Cells(current_row, 3).Value = icr2_control['icr2_m'][rep_idx]  # C - ICR2_M Cq
+            # Target2_M Cq value (Column C)
+            if rep_idx < len(target2_control['target2_m']) and target2_control['target2_m'][rep_idx] is not None:
+                ws.Cells(current_row, 3).Value = target2_control['target2_m'][rep_idx]  # C - Target2_M Cq
 
-            # ICR2_UM Cq value (Column J)
-            if rep_idx < len(icr2_control['icr2_um']) and icr2_control['icr2_um'][rep_idx] is not None:
-                ws.Cells(current_row, 10).Value = icr2_control['icr2_um'][rep_idx]  # J - ICR2_UM Cq
+            # Target2_UM Cq value (Column J)
+            if rep_idx < len(target2_control['target2_um']) and target2_control['target2_um'][rep_idx] is not None:
+                ws.Cells(current_row, 10).Value = target2_control['target2_um'][rep_idx]  # J - Target2_UM Cq
 
 
 def populate_sheet1_win32(wb, sample_name: str, plate_number: str):
@@ -412,99 +412,114 @@ def populate_sheet1_win32(wb, sample_name: str, plate_number: str):
         raise
 
 
-def get_control_selection():
+def get_control_selection(target1_name: str = 'ICR1', target2_name: str = 'ICR2', assay_type: str = 'BWS'):
     """
-    Prompt user to select 3 controls for ICR1 and 3 controls for ICR2.
+    Prompt user to select 3 controls for each target.
+
+    Args:
+        target1_name: Name of first target (e.g., 'ICR1' or 'PEG1')
+        target2_name: Name of second target (e.g., 'ICR2' or 'GRB')
+        assay_type: Type of assay ('BWS' or 'RSS')
 
     Returns:
-        Tuple of (icr1_controls, icr2_controls) where each is a list of 3 control names
+        Tuple of (target1_controls, target2_controls) where each is a list of 3 control names
     """
-    available_controls = ['A', 'B', 'C', 'D', 'E', 'F']
+    # BWS assays have 6 controls (A-F), RSS assays have 8 controls (A-H)
+    if assay_type == 'RSS':
+        available_controls = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+        controls_display = "A, B, C, D, E, F, G, H"
+    else:  # BWS or default
+        available_controls = ['A', 'B', 'C', 'D', 'E', 'F']
+        controls_display = "A, B, C, D, E, F"
 
     print("\nControl Selection")
     print("=" * 80)
-    print("Available controls: A, B, C, D, E, F")
-    print("You need to select 3 controls for ICR1 and 3 controls for ICR2.")
+    print(f"Assay Type: {assay_type}")
+    print(f"Available controls: {controls_display}")
+    print(f"You need to select 3 controls for {target1_name} and 3 controls for {target2_name}.")
     print()
 
-    # Get ICR1 controls
-    print("ICR1 Controls:")
-    icr1_controls = []
+    # Get target1 controls
+    print(f"{target1_name} Controls:")
+    target1_controls = []
     for i in range(3):
         while True:
-            control = input(f"  Select control {i+1} for ICR1 (A-F): ").strip().upper()
+            control = input(f"  Select control {i+1} for {target1_name} ({controls_display}): ").strip().upper()
             if control in available_controls:
-                icr1_controls.append(f"Control {control}")
+                target1_controls.append(f"Control {control}")
                 break
             else:
-                print(f"    Invalid input. Please enter one of: {', '.join(available_controls)}")
+                print(f"    Invalid input. Please enter one of: {controls_display}")
 
     print()
 
-    # Get ICR2 controls
-    print("ICR2 Controls:")
-    icr2_controls = []
+    # Get target2 controls
+    print(f"{target2_name} Controls:")
+    target2_controls = []
     for i in range(3):
         while True:
-            control = input(f"  Select control {i+1} for ICR2 (A-F): ").strip().upper()
+            control = input(f"  Select control {i+1} for {target2_name} ({controls_display}): ").strip().upper()
             if control in available_controls:
-                icr2_controls.append(f"Control {control}")
+                target2_controls.append(f"Control {control}")
                 break
             else:
-                print(f"    Invalid input. Please enter one of: {', '.join(available_controls)}")
+                print(f"    Invalid input. Please enter one of: {controls_display}")
 
     print()
-    print(f"ICR1 controls selected: {', '.join(icr1_controls)}")
-    print(f"ICR2 controls selected: {', '.join(icr2_controls)}")
+    print(f"{target1_name} controls selected: {', '.join(target1_controls)}")
+    print(f"{target2_name} controls selected: {', '.join(target2_controls)}")
     print("=" * 80)
 
-    return icr1_controls, icr2_controls
+    return target1_controls, target2_controls
 
 
-def generate_report_win32(icr1_file: Path, icr2_file: Path, template_file: Path,
+def generate_report_win32(target1_file: Path, target2_file: Path, template_file: Path,
                           output_file: Path, sample_name: str,
-                          icr1_controls: list = None, icr2_controls: list = None):
+                          target1_controls: list = None, target2_controls: list = None,
+                          target1_name: str = 'ICR1', target2_name: str = 'ICR2'):
     """
     Generate a methylation report using win32com (COM automation).
 
     Args:
-        icr1_file: Path to ICR1 CSV file
-        icr2_file: Path to ICR2 CSV file
+        target1_file: Path to first target CSV file (e.g., ICR1 or PEG)
+        target2_file: Path to second target CSV file (e.g., ICR2 or GRB)
         template_file: Path to Excel template file
         output_file: Path for output report file
         sample_name: Name of the sample to generate report for
-        icr1_controls: List of 3 control names for ICR1 (e.g., ['Control C', 'Control D', 'Control F'])
-        icr2_controls: List of 3 control names for ICR2 (e.g., ['Control A', 'Control B', 'Control E'])
+        target1_controls: List of 3 control names for target1 (e.g., ['Control C', 'Control D', 'Control F'])
+        target2_controls: List of 3 control names for target2 (e.g., ['Control A', 'Control B', 'Control E'])
+        target1_name: Name of first target (e.g., 'ICR1' or 'PEG')
+        target2_name: Name of second target (e.g., 'ICR2' or 'GRB')
     """
     print(f"Generating report for sample: {sample_name}")
 
     # Parse data files
-    print("  Parsing ICR1 data...")
-    icr1_data = parse_qpcr_csv(icr1_file)
+    print(f"  Parsing {target1_name} data...")
+    target1_data = parse_qpcr_csv(target1_file)
 
-    print("  Parsing ICR2 data...")
-    icr2_data = parse_qpcr_csv(icr2_file)
+    print(f"  Parsing {target2_name} data...")
+    target2_data = parse_qpcr_csv(target2_file)
 
     # Extract sample data
     print("  Extracting sample data...")
-    sample_data = extract_sample_data(icr1_data, icr2_data, sample_name)
+    sample_data = extract_sample_data(target1_data, target2_data, sample_name, target1_name, target2_name)
 
     # Extract HELA control data (always present)
     print("  Extracting HELA control data...")
-    hela_data = extract_sample_data(icr1_data, icr2_data, "HELA")
+    hela_data = extract_sample_data(target1_data, target2_data, "HELA", target1_name, target2_name)
 
     # Extract control data if controls are specified
-    icr1_controls_data = []
-    icr2_controls_data = []
-    if icr1_controls and icr2_controls:
+    target1_controls_data = []
+    target2_controls_data = []
+    if target1_controls and target2_controls:
         print("  Extracting user control data...")
-        for control_name in icr1_controls:
-            control_data = extract_sample_data(icr1_data, icr2_data, control_name)
-            icr1_controls_data.append(control_data)
+        for control_name in target1_controls:
+            control_data = extract_sample_data(target1_data, target2_data, control_name, target1_name, target2_name)
+            target1_controls_data.append(control_data)
 
-        for control_name in icr2_controls:
-            control_data = extract_sample_data(icr1_data, icr2_data, control_name)
-            icr2_controls_data.append(control_data)
+        for control_name in target2_controls:
+            control_data = extract_sample_data(target1_data, target2_data, control_name, target1_name, target2_name)
+            target2_controls_data.append(control_data)
 
     # Create a copy of the template
     print("  Creating copy of template...")
@@ -530,23 +545,23 @@ def generate_report_win32(icr1_file: Path, icr2_file: Path, template_file: Path,
 
         # Update plate identifier in A1
         print("  Setting plate identifier...")
-        plate_number, date_mmddyy, initials = extract_plate_info(icr1_file.name)
+        plate_number, date_mmddyy, initials = extract_plate_info(target1_file.name)
         plate_identifier = f"BWR_QS6_METHYL_{plate_number}_{date_mmddyy}_{initials}"
         ws_stepone.Cells(1, 1).Value = plate_identifier
 
-        # Populate the sample data (ICR1 rows 6-8, ICR2 rows 24-26)
+        # Populate the sample data (target1 rows 6-8, target2 rows 24-26)
         print("  Populating sample data...")
-        populate_stepone_data_win32(ws_stepone, sample_data, icr1_start_row=6, icr2_start_row=24)
+        populate_stepone_data_win32(ws_stepone, sample_data, target1_start_row=6, target2_start_row=24)
 
-        # Populate HELA control data (ICR1: rows 9-11, ICR2: rows 27-29)
+        # Populate HELA control data (target1: rows 9-11, target2: rows 27-29)
         print("  Populating HELA control data...")
-        populate_hela_controls_win32(ws_stepone, hela_data, icr1_start_row=9, icr2_start_row=27)
+        populate_hela_controls_win32(ws_stepone, hela_data, target1_start_row=9, target2_start_row=27)
 
-        # Populate user controls if specified (ICR1: rows 12-20, ICR2: rows 30-38)
-        if icr1_controls_data and icr2_controls_data:
+        # Populate user controls if specified (target1: rows 12-20, target2: rows 30-38)
+        if target1_controls_data and target2_controls_data:
             print("  Populating user control data...")
-            populate_controls_win32(ws_stepone, icr1_controls_data, icr2_controls_data,
-                                   icr1_start_row=12, icr2_start_row=30)
+            populate_controls_win32(ws_stepone, target1_controls_data, target2_controls_data,
+                                   target1_start_row=12, target2_start_row=30)
 
         # Populate Final sheet with sample name, run name, and date
         print("  Populating Final sheet...")

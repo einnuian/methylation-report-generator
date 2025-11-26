@@ -54,6 +54,30 @@ def save_config(config):
         print(f"Warning: Could not save configuration: {e}")
 
 
+def detect_assay_type(filename):
+    """
+    Detect the assay type (BWS or RSS) from the filename.
+
+    Args:
+        filename (str): Name of the file
+
+    Returns:
+        tuple: (assay_type, template_name, target1_name, target2_name)
+               e.g., ('BWS', 'qs6_bws_template.xlsm', 'ICR1', 'ICR2')
+    """
+    filename_upper = filename.upper()
+
+    if filename_upper.startswith('BWS'):
+        return 'BWS', 'qs6_bws_template.xlsm', 'ICR1', 'ICR2'
+    elif filename_upper.startswith('RSS'):
+        return 'RSS', 'qs6_rss_template.xlsm', 'PEG1', 'GRB'
+    else:
+        # Default to BWS if cannot detect
+        print(f"Warning: Could not detect assay type from filename: {filename}")
+        print("Defaulting to BWS (ICR1/ICR2)")
+        return 'BWS', 'qs6_bws_template.xlsm', 'ICR1', 'ICR2'
+
+
 def select_file(target_name, initial_dir=None):
     """
     Opens a file dialog to select a raw export file for a specific target.
@@ -150,40 +174,49 @@ def main():
     config['last_directory'] = str(target2_file.parent)
     save_config(config)
 
-    # Identify ICR1 and ICR2 files based on filename
+    # Detect assay type from the first file
+    print("\n" + "=" * 50)
+    print("Detecting assay type...")
+    assay_type, template_name, target1_name, target2_name = detect_assay_type(target1_file.name)
+    print(f"  Assay type: {assay_type}")
+    print(f"  Template: {template_name}")
+    print(f"  Targets: {target1_name}, {target2_name}")
+    print("=" * 50)
+
+    # Identify target files based on filename
     print("\n" + "=" * 50)
     print("Identifying target files...")
-    if "ICR1" in target1_file.name.upper():
-        icr1_file = target1_file
-        icr2_file = target2_file
-        print(f"  ICR1: {icr1_file.name}")
-        print(f"  ICR2: {icr2_file.name}")
-    elif "ICR2" in target1_file.name.upper():
-        icr1_file = target2_file
-        icr2_file = target1_file
-        print(f"  ICR1: {icr1_file.name}")
-        print(f"  ICR2: {icr2_file.name}")
+    if target1_name in target1_file.name.upper():
+        target1_file_sorted = target1_file
+        target2_file_sorted = target2_file
+        print(f"  {target1_name}: {target1_file_sorted.name}")
+        print(f"  {target2_name}: {target2_file_sorted.name}")
+    elif target2_name in target1_file.name.upper():
+        target1_file_sorted = target2_file
+        target2_file_sorted = target1_file
+        print(f"  {target1_name}: {target1_file_sorted.name}")
+        print(f"  {target2_name}: {target2_file_sorted.name}")
     else:
-        print("Warning: Could not identify ICR1/ICR2 from filenames")
+        print(f"Warning: Could not identify {target1_name}/{target2_name} from filenames")
         print("Assuming:")
-        icr1_file = target1_file
-        icr2_file = target2_file
-        print(f"  ICR1: {icr1_file.name}")
-        print(f"  ICR2: {icr2_file.name}")
+        target1_file_sorted = target1_file
+        target2_file_sorted = target2_file
+        print(f"  {target1_name}: {target1_file_sorted.name}")
+        print(f"  {target2_name}: {target2_file_sorted.name}")
 
     print("=" * 50)
 
     # Parse data files
     print("\nParsing qPCR data files...")
     try:
-        icr1_data = parse_qpcr_csv(icr1_file)
-        print(f"  ICR1: {len(icr1_data)} rows parsed")
+        target1_data = parse_qpcr_csv(target1_file_sorted)
+        print(f"  {target1_name}: {len(target1_data)} rows parsed")
 
-        icr2_data = parse_qpcr_csv(icr2_file)
-        print(f"  ICR2: {len(icr2_data)} rows parsed")
+        target2_data = parse_qpcr_csv(target2_file_sorted)
+        print(f"  {target2_name}: {len(target2_data)} rows parsed")
 
         # Get list of all samples
-        all_samples = get_all_samples(icr1_data, icr2_data)
+        all_samples = get_all_samples(target1_data, target2_data)
         print(f"\nFound {len(all_samples)} unique samples")
 
         # Filter out control samples and NTC for the sample list
@@ -247,16 +280,17 @@ def main():
 
     # Get control selections
     print()
-    icr1_controls, icr2_controls = get_control_selection()
+    target1_controls, target2_controls = get_control_selection(target1_name, target2_name, assay_type)
 
     # Extract plate information for filename
-    plate_number, date_mmddyy, initials = extract_plate_info(icr1_file.name)
+    plate_number, date_mmddyy, initials = extract_plate_info(target1_file_sorted.name)
 
-    # Locate template file
-    template_file = Path.cwd() / "template" / "qs6_result_template.xlsm"
+    # Locate template file based on detected assay type
+    template_file = Path.cwd() / "template" / template_name
     if not template_file.exists():
         print(f"\nError: Template file not found: {template_file}")
         sys.exit(1)
+    print(f"\nUsing template: {template_file.name}")
 
     # Create output directory
     output_dir = Path.cwd() / "output"
@@ -277,8 +311,8 @@ def main():
 
         try:
             generate_report_win32(
-                icr1_file, icr2_file, template_file, output_file, sample_name,
-                icr1_controls, icr2_controls
+                target1_file_sorted, target2_file_sorted, template_file, output_file, sample_name,
+                target1_controls, target2_controls, target1_name, target2_name
             )
             print(f"  ✓ Report saved: {output_file.name}")
             print()

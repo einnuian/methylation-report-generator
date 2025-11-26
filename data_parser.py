@@ -66,54 +66,57 @@ def parse_qpcr_csv(file_path: Path) -> List[Dict]:
     return data_rows
 
 
-def extract_sample_data(icr1_data: List[Dict], icr2_data: List[Dict], sample_name: str) -> Dict:
+def extract_sample_data(target1_data: List[Dict], target2_data: List[Dict], sample_name: str,
+                       target1_name: str = 'ICR1', target2_name: str = 'ICR2') -> Dict:
     """
-    Extract data for a specific sample from both ICR1 and ICR2 files.
+    Extract data for a specific sample from both target files.
 
     Args:
-        icr1_data: Parsed data from ICR1 file
-        icr2_data: Parsed data from ICR2 file
+        target1_data: Parsed data from first target file (e.g., ICR1 or PEG)
+        target2_data: Parsed data from second target file (e.g., ICR2 or GRB)
         sample_name: Name of the sample to extract
+        target1_name: Name of first target (e.g., 'ICR1' or 'PEG')
+        target2_name: Name of second target (e.g., 'ICR2' or 'GRB')
 
     Returns:
         Dictionary containing organized sample data:
         {
             'sample_name': str,
-            'icr1_m': [cq1, cq2, cq3],  # 3 replicates for ICR1 methylated
-            'icr1_um': [cq1, cq2, cq3],  # 3 replicates for ICR1 unmethylated
-            'icr2_m': [cq1, cq2, cq3],   # 3 replicates for ICR2 methylated
-            'icr2_um': [cq1, cq2, cq3]   # 3 replicates for ICR2 unmethylated
+            'target1_m': [cq1, cq2, cq3],  # 3 replicates for target1 methylated
+            'target1_um': [cq1, cq2, cq3],  # 3 replicates for target1 unmethylated
+            'target2_m': [cq1, cq2, cq3],   # 3 replicates for target2 methylated
+            'target2_um': [cq1, cq2, cq3]   # 3 replicates for target2 unmethylated
         }
     """
     result = {
         'sample_name': sample_name,
-        'icr1_m': [],
-        'icr1_um': [],
-        'icr2_m': [],
-        'icr2_um': []
+        'target1_m': [],
+        'target1_um': [],
+        'target2_m': [],
+        'target2_um': []
     }
 
-    # Extract ICR1 data
-    for row in icr1_data:
+    # Extract target1 data (e.g., ICR1 or PEG)
+    for row in target1_data:
         if row['Sample'] == sample_name:
             target = row['Target']
             cq_value = row['Cq']
 
-            if target == 'ICR1_M':
-                result['icr1_m'].append(safe_float_convert(cq_value))
-            elif target == 'ICR1_UM':
-                result['icr1_um'].append(safe_float_convert(cq_value))
+            if target == f'{target1_name}_M':
+                result['target1_m'].append(safe_float_convert(cq_value))
+            elif target == f'{target1_name}_UM':
+                result['target1_um'].append(safe_float_convert(cq_value))
 
-    # Extract ICR2 data
-    for row in icr2_data:
+    # Extract target2 data (e.g., ICR2 or GRB)
+    for row in target2_data:
         if row['Sample'] == sample_name:
             target = row['Target']
             cq_value = row['Cq']
 
-            if target == 'ICR2_M':
-                result['icr2_m'].append(safe_float_convert(cq_value))
-            elif target == 'ICR2_UM':
-                result['icr2_um'].append(safe_float_convert(cq_value))
+            if target == f'{target2_name}_M':
+                result['target2_m'].append(safe_float_convert(cq_value))
+            elif target == f'{target2_name}_UM':
+                result['target2_um'].append(safe_float_convert(cq_value))
 
     return result
 

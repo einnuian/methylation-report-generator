@@ -15,21 +15,24 @@ def extract_plate_info(filename: str) -> Tuple[str, str, str]:
     Extract plate number, date, and initials from the raw data filename.
 
     Args:
-        filename: Name of the raw data file (e.g., 'BWS_QS6_METHYLATION_2221_111125_AN_...')
+        filename: Name of the raw data file
+            - BWS: 'BWS_QS6_METHYLATION_2221_111125_AN_...' (4-digit plate)
+            - RSS: 'RSS_QS6_METHYLATION_562_112625_AN_...' (3-digit plate)
 
     Returns:
         Tuple of (plate_number, date_mmddyy, initials)
     """
-    # Extract plate number (4 digits after METHYLATION_)
-    plate_match = re.search(r'METHYLATION_(\d{4})', filename)
+    # Extract plate number (3 or 4 digits after METHYLATION_)
+    # BWS uses 4 digits, RSS uses 3 digits
+    plate_match = re.search(r'METHYLATION_(\d{3,4})', filename)
     plate_number = plate_match.group(1) if plate_match else 'XXXX'
 
     # Extract date (6 digits in MMDDYY format after plate number)
-    date_match = re.search(r'METHYLATION_\d{4}_(\d{6})', filename)
+    date_match = re.search(r'METHYLATION_\d{3,4}_(\d{6})', filename)
     date_mmddyy = date_match.group(1) if date_match else 'MMDDYY'
 
     # Extract initials (letters after date, e.g., 'AN')
-    initials_match = re.search(r'METHYLATION_\d{4}_\d{6}_([A-Z]+)', filename)
+    initials_match = re.search(r'METHYLATION_\d{3,4}_\d{6}_([A-Z]+)', filename)
     initials = initials_match.group(1) if initials_match else 'XX'
 
     return plate_number, date_mmddyy, initials
@@ -54,7 +57,7 @@ def format_date_mmddyy_to_full(date_mmddyy: str) -> str:
         return 'MM.DD.YYYY'
 
 
-def populate_final_sheet_win32(ws, sample_name: str, plate_number: str, date_mmddyy: str, initials: str):
+def populate_final_sheet_win32(ws, sample_name: str, plate_number: str, date_mmddyy: str, initials: str, assay_type: str = 'BWS'):
     """
     Populate the Final sheet with sample name, run name, and date.
     Searches cells, text boxes (shapes), and chart titles for placeholder text.
@@ -62,12 +65,14 @@ def populate_final_sheet_win32(ws, sample_name: str, plate_number: str, date_mmd
     Args:
         ws: COM worksheet object for 'Final' sheet
         sample_name: Name of the sample (e.g., 'BWR-6403C-2')
-        plate_number: Plate number (e.g., '2221')
+        plate_number: Plate number (e.g., '2221' for BWS, '562' for RSS)
         date_mmddyy: Date in MMDDYY format (e.g., '111125')
         initials: Operator initials (e.g., 'AN')
+        assay_type: Type of assay ('BWS' or 'RSS')
     """
-    # Format the run name
-    run_name = f"BWR_QS6_METHYL_{plate_number}_{date_mmddyy}_{initials}"
+    # Format the run name with appropriate prefix
+    prefix = 'RSS' if assay_type == 'RSS' else 'BWS'
+    run_name = f"{prefix}_QS6_METHYL_{plate_number}_{date_mmddyy}_{initials}"
 
     # Format the date
     date_formatted = format_date_mmddyy_to_full(date_mmddyy)
@@ -77,10 +82,12 @@ def populate_final_sheet_win32(ws, sample_name: str, plate_number: str, date_mmd
         if not text or not isinstance(text, str):
             return text
 
-        # Replace all placeholder patterns
+        # Replace all placeholder patterns (handle both BWS and RSS)
         text = text.replace('BWR-XXXX', sample_name)
-        text = text.replace('BWR_QS6_METHYL_XXXX_MMDDYY_XX', run_name)
-        text = text.replace('Plate BWR_QS6_METHYL_XXXX_MMDDYY_XX', f'Plate {run_name}')
+        text = text.replace('BWS_QS6_METHYL_XXXX_MMDDYY_XX', run_name)
+        text = text.replace('RSS_QS6_METHYL_XXX_MMDDYY_XX', run_name)
+        text = text.replace('Plate BWS_QS6_METHYL_XXXX_MMDDYY_XX', f'Plate {run_name}')
+        text = text.replace('Plate RSS_QS6_METHYL_XXX_MMDDYY_XX', f'Plate {run_name}')
         text = text.replace('MM.DD.YYYY XX', f'{date_formatted} {initials}')
 
         return text
@@ -546,7 +553,9 @@ def generate_report_win32(target1_file: Path, target2_file: Path, template_file:
         # Update plate identifier in A1
         print("  Setting plate identifier...")
         plate_number, date_mmddyy, initials = extract_plate_info(target1_file.name)
-        plate_identifier = f"BWR_QS6_METHYL_{plate_number}_{date_mmddyy}_{initials}"
+        # Use appropriate prefix based on assay type
+        prefix = 'RSS' if target1_name == 'PEG1' else 'BWS'
+        plate_identifier = f"{prefix}_QS6_METHYL_{plate_number}_{date_mmddyy}_{initials}"
         ws_stepone.Cells(1, 1).Value = plate_identifier
 
         # Populate the sample data (target1 rows 6-8, target2 rows 24-26)
@@ -567,7 +576,9 @@ def generate_report_win32(target1_file: Path, target2_file: Path, template_file:
         print("  Populating Final sheet...")
         try:
             ws_final = wb.Worksheets("Final")
-            populate_final_sheet_win32(ws_final, sample_name, plate_number, date_mmddyy, initials)
+            # Use same prefix logic as StepOne Data
+            assay_type = 'RSS' if target1_name == 'PEG1' else 'BWS'
+            populate_final_sheet_win32(ws_final, sample_name, plate_number, date_mmddyy, initials, assay_type)
             print("    Final sheet populated successfully")
         except Exception as e:
             print(f"    Warning: Could not populate Final sheet: {e}")

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test script to verify HELA control population."""
+"""Test script to verify HCT116 control population."""
 
 import sys
 from pathlib import Path
@@ -33,7 +33,7 @@ icr1_controls = ['Control C', 'Control D', 'Control F']
 icr2_controls = ['Control A', 'Control B', 'Control E']
 
 print("=" * 80)
-print("HELA CONTROL POPULATION TEST")
+print("HCT116 CONTROL POPULATION TEST")
 print("=" * 80)
 print()
 print(f"ICR1 controls: {', '.join(icr1_controls)}")
@@ -51,7 +51,7 @@ print()
 print("Please open the file and verify:")
 print("  1. No corruption warnings")
 print("  2. Test sample data in rows 6-8 (ICR1) and 24-26 (ICR2)")
-print("  3. HELA CONTROL data in rows 9-11 (ICR1) and 27-29 (ICR2)")
+print("  3. HCT116 CONTROL data in rows 9-11 (ICR1) and 27-29 (ICR2)")
 print(f"  4. User controls in rows 12-20 (ICR1): {', '.join(icr1_controls)}")
 print(f"  5. User controls in rows 30-38 (ICR2): {', '.join(icr2_controls)}")
 print("  6. All controls use BOTH M and UM probes (columns C and J)")

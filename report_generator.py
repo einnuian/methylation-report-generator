@@ -82,12 +82,23 @@ def populate_final_sheet_win32(ws, sample_name: str, plate_number: str, date_mmd
         if not text or not isinstance(text, str):
             return text
 
-        # Replace all placeholder patterns (handle both BWS and RSS)
+        # Replace sample name placeholder
         text = text.replace('BWR-XXXX', sample_name)
+
+        # Replace run name placeholders (handle various formats)
+        # BWS formats (4 X's for plate number)
         text = text.replace('BWS_QS6_METHYL_XXXX_MMDDYY_XX', run_name)
-        text = text.replace('RSS_QS6_METHYL_XXX_MMDDYY_XX', run_name)
         text = text.replace('Plate BWS_QS6_METHYL_XXXX_MMDDYY_XX', f'Plate {run_name}')
+
+        # RSS formats (3 X's for plate number)
+        text = text.replace('RSS_QS6_METHYL_XXX_MMDDYY_XX', run_name)
         text = text.replace('Plate RSS_QS6_METHYL_XXX_MMDDYY_XX', f'Plate {run_name}')
+
+        # RSS formats (4 X's - in case template has 4 X's like BWS)
+        text = text.replace('RSS_QS6_METHYL_XXXX_MMDDYY_XX', run_name)
+        text = text.replace('Plate RSS_QS6_METHYL_XXXX_MMDDYY_XX', f'Plate {run_name}')
+
+        # Replace date and initials placeholder
         text = text.replace('MM.DD.YYYY XX', f'{date_formatted} {initials}')
 
         return text
@@ -234,55 +245,55 @@ def populate_stepone_data_win32(ws, sample_data: Dict, target1_start_row: int = 
         ws.Cells(target2_start_row + 2, 10).Value = sample_data['target2_um'][2]  # J - Target2_UM Cq value
 
 
-def populate_hela_controls_win32(ws, hela_data: Dict, target1_start_row: int = 9, target2_start_row: int = 27):
+def populate_hct116_controls_win32(ws, hct116_data: Dict, target1_start_row: int = 9, target2_start_row: int = 27):
     """
-    Populate HELA control samples in StepOne Data sheet.
+    Populate HCT116 control samples in StepOne Data sheet.
     - Target1: 3 replicates (rows 9-11) with BOTH M and UM probes
     - Target2: 3 replicates (rows 27-29) with BOTH M and UM probes
 
     Args:
         ws: COM worksheet object for 'StepOne Data' sheet
-        hela_data: Dictionary with HELA control Cq values (contains target1_m, target1_um, target2_m, target2_um)
-        target1_start_row: Starting row number for target1 HELA controls (default 9)
-        target2_start_row: Starting row number for target2 HELA controls (default 27)
+        hct116_data: Dictionary with HCT116 control Cq values (contains target1_m, target1_um, target2_m, target2_um)
+        target1_start_row: Starting row number for target1 HCT116 controls (default 9)
+        target2_start_row: Starting row number for target2 HCT116 controls (default 27)
     """
-    hela_name = hela_data['sample_name']
+    hct116_name = hct116_data['sample_name']
 
-    # ========== TARGET1 HELA CONTROLS (Rows 9-11) ==========
+    # ========== TARGET1 HCT116 CONTROLS (Rows 9-11) ==========
     for rep_idx in range(3):
         current_row = target1_start_row + rep_idx
 
-        # HELA control name (same for both M and UM)
-        ws.Cells(current_row, 1).Value = hela_name  # A - HELA name
-        ws.Cells(current_row, 8).Value = hela_name  # H - HELA name (same)
+        # HCT116 control name (same for both M and UM)
+        ws.Cells(current_row, 1).Value = hct116_name  # A - HCT116 name
+        ws.Cells(current_row, 8).Value = hct116_name  # H - HCT116 name (same)
 
         # Column B and I (target names) preserved from template
 
         # Target1_M Cq value (Column C)
-        if rep_idx < len(hela_data['target1_m']) and hela_data['target1_m'][rep_idx] is not None:
-            ws.Cells(current_row, 3).Value = hela_data['target1_m'][rep_idx]  # C - Target1_M Cq
+        if rep_idx < len(hct116_data['target1_m']) and hct116_data['target1_m'][rep_idx] is not None:
+            ws.Cells(current_row, 3).Value = hct116_data['target1_m'][rep_idx]  # C - Target1_M Cq
 
         # Target1_UM Cq value (Column J)
-        if rep_idx < len(hela_data['target1_um']) and hela_data['target1_um'][rep_idx] is not None:
-            ws.Cells(current_row, 10).Value = hela_data['target1_um'][rep_idx]  # J - Target1_UM Cq
+        if rep_idx < len(hct116_data['target1_um']) and hct116_data['target1_um'][rep_idx] is not None:
+            ws.Cells(current_row, 10).Value = hct116_data['target1_um'][rep_idx]  # J - Target1_UM Cq
 
-    # ========== TARGET2 HELA CONTROLS (Rows 27-29) ==========
+    # ========== TARGET2 HCT116 CONTROLS (Rows 27-29) ==========
     for rep_idx in range(3):
         current_row = target2_start_row + rep_idx
 
-        # HELA control name (same for both M and UM)
-        ws.Cells(current_row, 1).Value = hela_name  # A - HELA name
-        ws.Cells(current_row, 8).Value = hela_name  # H - HELA name (same)
+        # HCT116 control name (same for both M and UM)
+        ws.Cells(current_row, 1).Value = hct116_name  # A - HCT116 name
+        ws.Cells(current_row, 8).Value = hct116_name  # H - HCT116 name (same)
 
         # Column B and I (target names) preserved from template
 
         # Target2_M Cq value (Column C)
-        if rep_idx < len(hela_data['target2_m']) and hela_data['target2_m'][rep_idx] is not None:
-            ws.Cells(current_row, 3).Value = hela_data['target2_m'][rep_idx]  # C - Target2_M Cq
+        if rep_idx < len(hct116_data['target2_m']) and hct116_data['target2_m'][rep_idx] is not None:
+            ws.Cells(current_row, 3).Value = hct116_data['target2_m'][rep_idx]  # C - Target2_M Cq
 
         # Target2_UM Cq value (Column J)
-        if rep_idx < len(hela_data['target2_um']) and hela_data['target2_um'][rep_idx] is not None:
-            ws.Cells(current_row, 10).Value = hela_data['target2_um'][rep_idx]  # J - Target2_UM Cq
+        if rep_idx < len(hct116_data['target2_um']) and hct116_data['target2_um'][rep_idx] is not None:
+            ws.Cells(current_row, 10).Value = hct116_data['target2_um'][rep_idx]  # J - Target2_UM Cq
 
 
 def populate_controls_win32(ws, target1_controls_data: list, target2_controls_data: list,
@@ -377,15 +388,15 @@ def populate_sheet1_win32(wb, sample_name: str, plate_number: str):
             value = ws_raw.Cells(source_row, 14).Value  # Column N = 14
             ws_sheet1.Cells(dest_row, 5).Value = value  # Column E = 5
 
-        # Copy ICR1 HELA: N14-N16 from RAW DATA to C10-C12 in Sheet1
-        for i in range(3):  # 3 rows (HELA replicates)
+        # Copy ICR1 HCT116: N14-N16 from RAW DATA to C10-C12 in Sheet1
+        for i in range(3):  # 3 rows (HCT116 replicates)
             source_row = 14 + i  # N14-N16
             dest_row = 10 + i    # C10-C12
             value = ws_raw.Cells(source_row, 14).Value  # Column N = 14
             ws_sheet1.Cells(dest_row, 3).Value = value  # Column C = 3
 
-        # Copy ICR2 HELA: N35-N37 from RAW DATA to E10-E12 in Sheet1
-        for i in range(3):  # 3 rows (HELA replicates)
+        # Copy ICR2 HCT116: N35-N37 from RAW DATA to E10-E12 in Sheet1
+        for i in range(3):  # 3 rows (HCT116 replicates)
             source_row = 35 + i  # N35-N37
             dest_row = 10 + i    # E10-E12
             value = ws_raw.Cells(source_row, 14).Value  # Column N = 14
@@ -511,9 +522,9 @@ def generate_report_win32(target1_file: Path, target2_file: Path, template_file:
     print("  Extracting sample data...")
     sample_data = extract_sample_data(target1_data, target2_data, sample_name, target1_name, target2_name)
 
-    # Extract HELA control data (always present)
-    print("  Extracting HELA control data...")
-    hela_data = extract_sample_data(target1_data, target2_data, "HELA", target1_name, target2_name)
+    # Extract HCT116 control data (always present)
+    print("  Extracting HCT116 control data...")
+    hct116_data = extract_sample_data(target1_data, target2_data, "HCT116", target1_name, target2_name)
 
     # Extract control data if controls are specified
     target1_controls_data = []
@@ -562,9 +573,9 @@ def generate_report_win32(target1_file: Path, target2_file: Path, template_file:
         print("  Populating sample data...")
         populate_stepone_data_win32(ws_stepone, sample_data, target1_start_row=6, target2_start_row=24)
 
-        # Populate HELA control data (target1: rows 9-11, target2: rows 27-29)
-        print("  Populating HELA control data...")
-        populate_hela_controls_win32(ws_stepone, hela_data, target1_start_row=9, target2_start_row=27)
+        # Populate HCT116 control data (target1: rows 9-11, target2: rows 27-29)
+        print("  Populating HCT116 control data...")
+        populate_hct116_controls_win32(ws_stepone, hct116_data, target1_start_row=9, target2_start_row=27)
 
         # Populate user controls if specified (target1: rows 12-20, target2: rows 30-38)
         if target1_controls_data and target2_controls_data:
@@ -694,7 +705,7 @@ if __name__ == '__main__':
     print("  3. Macros are preserved")
     print("  4. Data is correctly populated in StepOne Data sheet:")
     print("     - Test sample data in rows 6-8 (ICR1) and 24-26 (ICR2)")
-    print("     - HELA control data in rows 9-11 (ICR1) and 27-29 (ICR2)")
+    print("     - HCT116 control data in rows 9-11 (ICR1) and 27-29 (ICR2)")
     print(f"     - User controls in rows 12-20 (ICR1): {', '.join(icr1_controls)}")
     print(f"     - User controls in rows 30-38 (ICR2): {', '.join(icr2_controls)}")
     print("  5. All controls use BOTH M and UM probes (columns C and J)")

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify HELA control data in the generated Excel file."""
+"""Verify HCT116 control data in the generated Excel file."""
 
 import win32com.client
 from pathlib import Path
@@ -7,7 +7,7 @@ from pathlib import Path
 output_file = Path('output/Control_A_methylation_report_hela_test.xlsm')
 
 print("=" * 80)
-print("VERIFYING HELA CONTROL DATA")
+print("VERIFYING HCT116 CONTROL DATA")
 print("=" * 80)
 print()
 
@@ -33,7 +33,7 @@ try:
         print(f"  Row {row}: {name} | {target} | M={m_cq} | {name_h} | {target_um} | UM={um_cq}")
 
     print()
-    print("HELA CONTROL - ICR1 (Rows 9-11):")
+    print("HCT116 CONTROL - ICR1 (Rows 9-11):")
     for row in range(9, 12):
         name = ws.Cells(row, 1).Value
         target = ws.Cells(row, 2).Value
@@ -67,7 +67,7 @@ try:
         print(f"  Row {row}: {name} | {target} | M={m_cq} | {name_h} | {target_um} | UM={um_cq}")
 
     print()
-    print("HELA CONTROL - ICR2 (Rows 27-29):")
+    print("HCT116 CONTROL - ICR2 (Rows 27-29):")
     for row in range(27, 30):
         name = ws.Cells(row, 1).Value
         target = ws.Cells(row, 2).Value
@@ -92,21 +92,21 @@ try:
     print()
     print("=" * 80)
 
-    # Verify HELA controls have data
+    # Verify HCT116 controls have data
     hela_icr1_m_populated = all(ws.Cells(row, 3).Value is not None for row in range(9, 12))
     hela_icr1_um_populated = all(ws.Cells(row, 10).Value is not None for row in range(9, 12))
     hela_icr2_m_populated = all(ws.Cells(row, 3).Value is not None for row in range(27, 30))
     hela_icr2_um_populated = all(ws.Cells(row, 10).Value is not None for row in range(27, 30))
 
     if hela_icr1_m_populated and hela_icr1_um_populated:
-        print("✓ ICR1 HELA controls: M and UM probes populated")
+        print("✓ ICR1 HCT116 controls: M and UM probes populated")
     else:
-        print("✗ ICR1 HELA controls: Missing data")
+        print("✗ ICR1 HCT116 controls: Missing data")
 
     if hela_icr2_m_populated and hela_icr2_um_populated:
-        print("✓ ICR2 HELA controls: M and UM probes populated")
+        print("✓ ICR2 HCT116 controls: M and UM probes populated")
     else:
-        print("✗ ICR2 HELA controls: Missing data")
+        print("✗ ICR2 HCT116 controls: Missing data")
 
     print("=" * 80)
 

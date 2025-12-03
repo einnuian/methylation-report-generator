@@ -221,7 +221,7 @@ def main():
 
         # Filter out control samples and NTC for the sample list
         test_samples = [s for s in all_samples if not s.startswith('Control ')
-                       and s != 'HELA' and s != 'NTC']
+                       and s != 'HCT116' and s != 'NTC']
 
         print(f"Test samples available: {len(test_samples)}")
 

@@ -33,14 +33,14 @@ for i, sample in enumerate(all_samples, 1):
 print("-" * 80)
 print()
 
-# Check for HELA-related samples
-hela_samples = [s for s in all_samples if 'HELA' in s.upper()]
+# Check for HCT116-related samples
+hela_samples = [s for s in all_samples if 'HCT116' in s.upper()]
 if hela_samples:
-    print(f"Found {len(hela_samples)} HELA-related samples:")
+    print(f"Found {len(hela_samples)} HCT116-related samples:")
     for sample in hela_samples:
         print(f"  - '{sample}'")
 else:
-    print("No samples containing 'HELA' found")
+    print("No samples containing 'HCT116' found")
 
 print()
 print("=" * 80)

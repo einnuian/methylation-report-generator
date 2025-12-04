@@ -85,18 +85,14 @@ def populate_final_sheet_win32(ws, sample_name: str, plate_number: str, date_mmd
         # Replace sample name placeholder
         text = text.replace('BWR-XXXX', sample_name)
 
-        # Replace run name placeholders (handle various formats)
+        # Replace run name placeholders
         # BWS formats (4 X's for plate number)
-        text = text.replace('BWS_QS6_METHYL_XXXX_MMDDYY_XX', run_name)
-        text = text.replace('Plate BWS_QS6_METHYL_XXXX_MMDDYY_XX', f'Plate {run_name}')
+        text = text.replace('BWR_QS6_METHYL_XXXX_MMDDYY_XX', run_name)
+        text = text.replace('Plate BWR_QS6_METHYL_XXXX_MMDDYY_XX', f'Plate {run_name}')
 
         # RSS formats (3 X's for plate number)
         text = text.replace('RSS_QS6_METHYL_XXX_MMDDYY_XX', run_name)
         text = text.replace('Plate RSS_QS6_METHYL_XXX_MMDDYY_XX', f'Plate {run_name}')
-
-        # RSS formats (4 X's - in case template has 4 X's like BWS)
-        text = text.replace('RSS_QS6_METHYL_XXXX_MMDDYY_XX', run_name)
-        text = text.replace('Plate RSS_QS6_METHYL_XXXX_MMDDYY_XX', f'Plate {run_name}')
 
         # Replace date and initials placeholder
         text = text.replace('MM.DD.YYYY XX', f'{date_formatted} {initials}')
@@ -414,16 +410,19 @@ def populate_sheet1_win32(wb, sample_name: str, plate_number: str):
         ws_sheet1.Cells(6, 3).Value = sample_number  # Column C = 3
         ws_sheet1.Cells(6, 3).Font.Bold = True
 
-        # Replace 'XXXX' in cells G8 and G11 with plate number
+        # Replace plate number placeholder in cells G8 and G11
+        # Handle both 'XXXX' (BWS, 4-digit) and 'XXX' (RSS, 3-digit)
         # G8
         current_value_g8 = ws_sheet1.Cells(8, 7).Value  # Column G = 7
         if current_value_g8 and isinstance(current_value_g8, str):
-            ws_sheet1.Cells(8, 7).Value = current_value_g8.replace('XXXX', plate_number)
+            new_value_g8 = current_value_g8.replace('XXXX', plate_number).replace('XXX', plate_number)
+            ws_sheet1.Cells(8, 7).Value = new_value_g8
 
         # G11
         current_value_g11 = ws_sheet1.Cells(11, 7).Value  # Column G = 7
         if current_value_g11 and isinstance(current_value_g11, str):
-            ws_sheet1.Cells(11, 7).Value = current_value_g11.replace('XXXX', plate_number)
+            new_value_g11 = current_value_g11.replace('XXXX', plate_number).replace('XXX', plate_number)
+            ws_sheet1.Cells(11, 7).Value = new_value_g11
 
     except Exception as e:
         print(f"    Warning: Could not populate Sheet1: {e}")
